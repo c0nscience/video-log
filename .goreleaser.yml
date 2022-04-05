@@ -36,12 +36,8 @@ archives:
     replacements:
       darwin: macOS
     format: tar.gz
-    files:
-      - LICENSE
   - id: windows
     builds: [ windows ]
     <<: *archive_defaults
     wrap_in_directory: false
     format: zip
-    files:
-      - LICENSE
