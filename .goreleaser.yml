@@ -8,6 +8,7 @@ release:
 before:
   hooks:
     - go mod tidy
+    - npm run package
 
 builds:
   - <<: &build_defaults

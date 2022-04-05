@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "package": "rollup -c",
     "build": "rollup -c && go build .",
     "start": "rollup -c && go run ."
   },
