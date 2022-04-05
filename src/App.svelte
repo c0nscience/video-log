@@ -12,7 +12,10 @@
 <main>
     <ul>
         {#each videos as video}
-            <li>{video}</li>
+            <li>
+                <strong>{video.name}</strong><br>
+                <i>{video.description}</i>
+            </li>
         {/each}
     </ul>
 </main>

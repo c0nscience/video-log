@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "start": "sirv public --no-clear"
+    "prod": "npm run build && go build .",
+    "start": "npm run build && go run ."
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
