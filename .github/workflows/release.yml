@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  push:
+    paths-ignore:
+      - 'README.md'
+    branches: [ main ]
+
+jobs:
+
+  #  test:
+  #    name: Test
+  #    runs-on: ubuntu-latest
+  #    steps:
+  #      - name: Checkout
+  #        uses: actions/checkout@v2
+  #      - name: Set up Go 1.15
+  #        uses: actions/setup-go@v2
+  #        with:
+  #          go-version: 1.15.3
+  #
+  #      - name: Install Inkscape
+  #        run: |
+  #          sudo add-apt-repository ppa:inkscape.dev/stable
+  #          sudo apt update
+  #          sudo apt install inkscape
+  #
+  #      - name: Test
+  #        run: |
+  #          cd pkg
+  #          go test -race ./...
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Set up Go
+        uses: actions/setup-go@v2
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          version: latest
+          args: release --rm-dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

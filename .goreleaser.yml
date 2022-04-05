@@ -1,0 +1,47 @@
+project_name: stg
+
+release:
+  prerelease: false
+  draft: false
+  name_template: "video log v{{.Version}}"
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - <<: &build_defaults
+      binary: bin/vl
+      main: ./main.go
+    id: macos
+    goos: [ darwin ]
+    goarch: [ amd64 ]
+
+  - <<: *build_defaults
+    id: linux
+    goos: [ linux ]
+    goarch: [ amd64 ]
+
+  - <<: *build_defaults
+    id: windows
+    goos: [ windows ]
+    goarch: [ amd64 ]
+
+archives:
+  - id: nix
+    builds: [ macos, linux ]
+    <<: &archive_defaults
+      name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    wrap_in_directory: true
+    replacements:
+      darwin: macOS
+    format: tar.gz
+    files:
+      - LICENSE
+  - id: windows
+    builds: [ windows ]
+    <<: *archive_defaults
+    wrap_in_directory: false
+    format: zip
+    files:
+      - LICENSE
