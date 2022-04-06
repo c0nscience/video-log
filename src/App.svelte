@@ -4,20 +4,32 @@
     let videos = []
     let config = {}
 
-    onMount(async () => {
-        const resCfg = await fetch('/config')
-        config = await resCfg.json()
+    const getVideos = async () => {
+        const res = await fetch('/videos')
+        videos = await res.json()
+    }
 
-        if (config.Dir === '') {
-            console.log('set dir')
-        } else {
-            const resVid = await fetch('/videos')
-            videos = await resVid.json()
+    onMount(async () => {
+        const res = await fetch('/config')
+        config = await res.json()
+
+        if (config.dir !== '') {
+            await getVideos()
         }
     })
+
+    const updateDir = async () => {
+        await fetch('/config', {
+            method: "POST",
+            body: JSON.stringify(config),
+        })
+        await getVideos()
+    }
 </script>
 
 <main>
+    <input bind:value={config.dir}/>
+    <button type="button" on:click={updateDir}>Send</button>
     <ul>
         {#each videos as video}
             <li>

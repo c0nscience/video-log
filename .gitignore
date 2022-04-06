@@ -4,6 +4,8 @@
 
 .DS_Store
 
+.vl.config
+
 # Created by https://www.toptal.com/developers/gitignore/api/intellij+all,windows,node
 # Edit at https://www.toptal.com/developers/gitignore?templates=intellij+all,windows,node
 

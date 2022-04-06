@@ -23,6 +23,7 @@ const (
 func Fetch() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		dir := config.Settings.Dir
+		log.Printf("directory \"%s\"", dir)
 		files, err := ioutil.ReadDir(dir)
 		if err != nil {
 			log.Fatal(err)

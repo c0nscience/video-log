@@ -28,17 +28,45 @@ func Fetch() func(http.ResponseWriter, *http.Request) {
 	}
 
 	b, _ := ioutil.ReadFile(configFile)
-	log.Println(string(b))
+	log.Println("file contents", string(b))
 	if len(b) > 0 {
 		_ = json.Unmarshal(b, Settings)
 	}
 	return func(w http.ResponseWriter, r *http.Request) {
-
-		w.WriteHeader(http.StatusOK)
-		bytes, err := json.Marshal(Settings)
-		if err != nil {
-			log.Fatal(err)
+		if r.Method == http.MethodGet {
+			w.WriteHeader(http.StatusOK)
+			bytes, err := json.Marshal(Settings)
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				log.Println(err)
+				return
+			}
+			w.Write(bytes)
 		}
-		w.Write(bytes)
+
+		if r.Method == http.MethodPost {
+			b, err := ioutil.ReadAll(r.Body)
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				log.Println(err)
+				return
+			}
+
+			err = ioutil.WriteFile(configFile, b, fs.ModePerm)
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				log.Println(err)
+				return
+			}
+
+			err = json.Unmarshal(b, Settings)
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				log.Println(err)
+				return
+			}
+
+			w.WriteHeader(http.StatusOK)
+		}
 	}
 }
