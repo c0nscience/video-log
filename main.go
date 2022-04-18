@@ -23,6 +23,7 @@ func main() {
 		panic(err)
 	}
 
+	//todo use gorillamux for easier mapping to path and method
 	http.Handle("/", http.FileServer(http.FS(fsys)))
 	http.HandleFunc(videos.FetchUrl, videos.Fetch())
 	http.HandleFunc(config.FetchUrl, config.Fetch())
