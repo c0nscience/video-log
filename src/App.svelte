@@ -43,6 +43,16 @@
                 type="button" on:click={updateDir}>Send
         </button>
     </div>
+    <div class="mb-8 ml-8">
+        <button class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600"
+                type="button" on:click={getVideos}>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                 stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+        </button>
+    </div>
     <div class="grid gap-4 grid-cols-3 mx-8">
         {#each videos as video}
             <div class="rounded-lg bg-slate-700 shadow-2xl px-4 py-8 text-slate-200 grid grid-flow-row auto-rows-auto content-between gap-4">
