@@ -1,8 +1,12 @@
 <script>
     import {onMount} from 'svelte'
+    import Button from "./components/Button.svelte";
+    import Modal from "./components/Modal.svelte";
 
     let videos = []
     let config = {}
+    let showDeleteModal = false
+    let videoToDelete = undefined
 
     const getVideos = async () => {
         const res = await fetch('/videos')
@@ -33,27 +37,32 @@
         })
         await getVideos()
     }
+
+    const deleteEntry = async (v) => {
+        await fetch(`/videos`, {
+            method: "DELETE",
+            body: JSON.stringify(v),
+        })
+        await getVideos()
+    }
 </script>
 
 <main>
     <div class="mb-12 ml-8">
         <input class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm sm:text-sm border-transparent rounded-md bg-slate-500 text-slate-200 py-2 px-4"
                bind:value={config.dir}/>
-        <button class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600"
-                type="button" on:click={updateDir}>Send
-        </button>
+        <Button label="Send" fn={updateDir}/>
     </div>
     <div class="mb-8 ml-8">
-        <button class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600"
-                type="button" on:click={getVideos}>
+        <Button fn={getVideos}>
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                  stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round"
                       d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
             </svg>
-        </button>
+        </Button>
     </div>
-    <div class="grid gap-4 grid-cols-3 mx-8">
+    <div class="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mx-16 md:mx-8">
         {#each videos as video}
             <div class="rounded-lg bg-slate-700 shadow-2xl px-4 py-8 text-slate-200 grid grid-flow-row auto-rows-auto content-between gap-4">
                 <div class="text-2xl">{video.date}</div>
@@ -62,18 +71,31 @@
                               class="text-mono shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-0 rounded-md text-slate-200 bg-slate-500 p-2"
                               bind:value={video.description}></textarea>
                 </div>
-                <div class="grid grid-cols-2 justify-between">
+                <div class="grid gap-1 grid-rows-2 2xl:grid-rows-none 2xl:grid-cols-2 2xl:justify-between">
                     <div class="text-xl font-semibold underline text-slate-400">{video.name}.mkv</div>
-                    <button class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600"
-                            type="button"
-                            on:click={() => {updateEntry(video)}}>
-                        Save
-                    </button>
+                    <Button label="Save" fn={() => {updateEntry(video)}}/>
+                    <Button label="Delete" fn={() => {
+                        showDeleteModal = true
+                        videoToDelete = video
+                    }}/>
                 </div>
             </div>
         {/each}
     </div>
 </main>
+
+{#if showDeleteModal}
+    <Modal on:close="{() => showDeleteModal = false}">
+        <p>Do you really want to delete this?</p>
+
+        <Button label="Delete" fn={() => {
+            deleteEntry(videoToDelete)
+            videoToDelete = undefined
+            showDeleteModal = false
+        }}/>
+    </Modal>
+{/if}
+
 
 <style global lang="postcss">
     @tailwind base;
