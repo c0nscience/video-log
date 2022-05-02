@@ -5,8 +5,11 @@
 
     let videos = []
     let config = {}
+    let tools = {}
     let showDeleteModal = false
+    let showTmspModal = false
     let videoToDelete = undefined
+    let tmsp = ""
 
     const getVideos = async () => {
         const res = await fetch('/videos')
@@ -45,13 +48,32 @@
         })
         await getVideos()
     }
+
+    const transformTmsp = async () => {
+        const res = await fetch(`/tools/timestamps`, {
+            method: "POST",
+            body: JSON.stringify(tools),
+        })
+        const t = await res.json()
+        tmsp = t.timestamp
+        showTmspModal = true
+    }
 </script>
 
 <main>
-    <div class="mb-12 ml-8">
-        <input class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm sm:text-sm border-transparent rounded-md bg-slate-500 text-slate-200 py-2 px-4"
-               bind:value={config.dir}/>
-        <Button label="Send" fn={updateDir}/>
+    <div class="mb-12 ml-8 grid grid-cols-2 gap-4">
+        <div>
+            <input
+                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm sm:text-sm border-transparent rounded-md bg-slate-500 text-slate-200 py-2 px-4"
+                    bind:value={config.dir}/>
+            <Button label="Send" fn={updateDir}/>
+        </div>
+        <div>
+            <input
+                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm sm:text-sm border-transparent rounded-md bg-slate-500 text-slate-200 py-2 px-4"
+                    bind:value={tools.path}/>
+            <Button label="Send" fn={transformTmsp}/>
+        </div>
     </div>
     <div class="mb-8 ml-8">
         <Button fn={getVideos}>
@@ -93,6 +115,14 @@
             videoToDelete = undefined
             showDeleteModal = false
         }}/>
+    </Modal>
+{/if}
+
+{#if showTmspModal}
+    <Modal on:close="{() => showTmspModal = false}">
+        <p>Timestamp:</p>
+        <textarea rows="20"
+                  class="text-mono shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-0 rounded-md text-slate-200 bg-slate-500 p-2">{tmsp}</textarea>
     </Modal>
 {/if}
 

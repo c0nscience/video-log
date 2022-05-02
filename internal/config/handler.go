@@ -24,11 +24,11 @@ func Load() {
 	_, err := os.Stat(configFile)
 	if os.IsNotExist(err) {
 		b, _ := json.Marshal(Settings)
-		ioutil.WriteFile(configFile, b, fs.ModePerm)
+		_ = ioutil.WriteFile(configFile, b, fs.ModePerm)
 	}
 
 	b, _ := ioutil.ReadFile(configFile)
-	log.Println("file contents", string(b))
+	log.Println("config loaded", string(b))
 	if len(b) > 0 {
 		_ = json.Unmarshal(b, Settings)
 	}
