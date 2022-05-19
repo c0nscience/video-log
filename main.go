@@ -14,6 +14,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -79,9 +80,21 @@ func main() {
 
 		result := []string{}
 		for _, record := range records[1:] {
-			tmsp := record[6][3 : len(record[6])-3]
-			note := record[19]
+			tmspStr := record[6][:len(record[6])-3]
+			note := record[20]
 
+			prts := strings.Split(tmspStr, ":")
+			h, err := strconv.ParseInt(prts[0], 10, 64)
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				log.Printf("could not read file '%s' into csv. Error: %v", t.Path, err)
+				return
+			}
+			h = h - 1
+			tmsp := fmt.Sprintf("%02d:%s:%s", h, prts[1], prts[2])
+			if h == 0 {
+				tmsp = strings.Join(prts[1:], ":")
+			}
 			result = append(result, fmt.Sprintf("%s %s", tmsp, note))
 		}
 
